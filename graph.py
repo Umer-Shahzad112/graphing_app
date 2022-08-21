@@ -116,8 +116,12 @@ if available:
                         col1 ,col2 = st.columns(2)
                         with col1:
                             st.slider('X lower limit',float(xmin),float(xmax),key='xmin')
+                            if st.checkbox('Set X log scale')
+                                plt.xscale('log')
                         with col2:
                             st.slider('X upper limit',float(xmin),float(xmax),key= 'xmax')
+                            if st.checkbox('Set Y log scale')
+                                plt.yscale('log')
                         plt.xlim(st.session_state.xmin,st.session_state.xmax)
                     # except:
                     #     st.warning(body = 'You can not set xlim',icon='⚠️')
