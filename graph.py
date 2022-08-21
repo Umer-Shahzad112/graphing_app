@@ -46,6 +46,7 @@ elif st.session_state.how == 'Upload my Data (csv or excel)':
       
         available = True
         if st.checkbox('Preview Data'):
+            st.write(type(df))
             st.write(df)
             st.write(f'{len(df)} Data entries')
 
