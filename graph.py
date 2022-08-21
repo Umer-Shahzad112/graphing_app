@@ -122,10 +122,11 @@ if available:
                     # except:
                     #     st.warning(body = 'You can not set xlim',icon='⚠️')
         with container1:
-            with col1:
+            col11 ,col22 = st.columns(2)
+            with col11:
                 if st.checkbox('Set X log scale'):
                     plt.xscale('log')
-            with col2:
+            with col22:
                 if st.checkbox('Set Y log scale'):
                     plt.yscale('log')
             if len(y) !=0:
