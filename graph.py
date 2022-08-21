@@ -31,7 +31,7 @@ def load(name):
     dof = sns.load_dataset(name)
     if 'Unnamed: 0' in dof.columns:
         dof.drop('Unnamed: 0',inplace=True,axis = 1)
-    return dof.copy()
+    return dof
 
 pallets = ['bright','deep','muted','hls','rocket','Blues']
 available = False
