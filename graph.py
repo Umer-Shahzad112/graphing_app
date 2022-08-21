@@ -117,7 +117,7 @@ if available:
                         with col1:
                             st.slider('X lower limit',float(xmin),float(xmax),key='xmin')
                         with col2:
-                            st.slider('X upper limit',float(xmin),float(xmax),key= 'xmax'))
+                            st.slider('X upper limit',float(xmin),float(xmax),key= 'xmax')
                         plt.xlim(st.session_state.xmin,st.session_state.xmax)
                     # except:
                     #     st.warning(body = 'You can not set xlim',icon='⚠️')
