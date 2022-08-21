@@ -17,7 +17,7 @@ if 'data_names' not in st.session_state:
 st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (csv or excel)'],key='how')
 
 
-@st.cache
+# @st.cache
 def load(name):
     dfo = sns.load_dataset(name)
     if 'Unnamed: 0' in dfo.columns:
