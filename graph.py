@@ -126,6 +126,12 @@ if available:
                     # except:
                     #     st.warning(body = 'You can not set xlim',icon='⚠️')
         with container1:
+            with col1:
+                if st.checkbox('Set X log scale'):
+                    plt.xscale('log')
+            with col2:
+                if st.checkbox('Set Y log scale'):
+                    plt.yscale('log')
             if len(y) !=0:
                 st.pyplot(fig)
 
