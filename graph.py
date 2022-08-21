@@ -19,10 +19,10 @@ st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (
 
 @st.cache
 def load(name):
-    df = sns.load_dataset(name)
-    if 'Unnamed: 0' in df.columns:
-        df.drop('Unnamed: 0',inplace=True,axis = 1)
-    return df
+    dfo = sns.load_dataset(name)
+    if 'Unnamed: 0' in dfo.columns:
+        dfo.drop('Unnamed: 0',inplace=True,axis = 1)
+    return dfo
 
 pallets = ['bright','deep','muted','hls','rocket','Blues']
 available = False
