@@ -14,7 +14,7 @@ if 'data_names' not in st.session_state:
         else:
             break
 
-st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (csv)'],key='how')
+st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (csv or excel)'],key='how')
 
 
 # @st.cache
@@ -34,11 +34,15 @@ if st.session_state.how == 'Use Built-in Datasets':
         if st.checkbox('Preview Data'):
             st.write(df)
             st.write(f'{len(df)} Data entries')
-elif st.session_state.how == 'Upload my Data (csv)':
-    file = st.file_uploader('Upload Data file here',type=['csv'])
+elif st.session_state.how == 'Upload my Data (csv,excel)':
+    file = st.file_uploader('Upload Data file here',type=['csv','xlsx'])
     if file:
         if file.type == 'text/csv':
             df = pd.read_csv(file)
+        elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            df = pd.read_excel(file)
+        else:
+            st.warning('Warning: File Type not supported')
       
         available = True
         if st.checkbox('Preview Data'):
