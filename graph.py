@@ -29,7 +29,7 @@ available = False
 if st.session_state.how == 'Use Built-in Datasets':
     name = st.selectbox('Which data set do you want to work on?',options=st.session_state.data_names,index=0,)
     if name != 'None':
-        df = load(name).copy()
+        df = load(name).copy(deep=True)
         available = True
         if st.checkbox('Preview Data'):
             st.write(df)
