@@ -26,12 +26,12 @@ if 'lastname' not in st.session_state:
 st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (csv or excel)'],key='how')
 
 
-# @st.cache
+@st.cache
 def load(name):
     dof = sns.load_dataset(name)
     if 'Unnamed: 0' in dof.columns:
         dof.drop('Unnamed: 0',inplace=True,axis = 1)
-    return dof
+    return dof.copy()
 
 pallets = ['bright','deep','muted','hls','rocket','Blues']
 available = False
@@ -39,7 +39,7 @@ if st.session_state.how == 'Use Built-in Datasets':
     name = st.selectbox('Which data set do you want to work on?',options=st.session_state.data_names,index=0,)
     if name != 'None':
         if st.session_state.lastname != name:
-            st.session_state.df = load(name).copy(deep=True)
+            st.session_state.df = load(name)
             st.session_state.lastname = name
         available = True
         if st.checkbox('Preview Data'):
