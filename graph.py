@@ -34,7 +34,7 @@ if st.session_state.how == 'Use Built-in Datasets':
         if st.checkbox('Preview Data'):
             st.write(df)
             st.write(f'{len(df)} Data entries')
-elif st.session_state.how == 'Upload my Data (csv,excel)':
+elif st.session_state.how == 'Upload my Data (csv or excel)':
     file = st.file_uploader('Upload Data file here',type=['csv','xlsx'])
     if file:
         if file.type == 'text/csv':
