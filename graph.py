@@ -14,6 +14,9 @@ if 'data_names' not in st.session_state:
         else:
             break
 
+if 'df' not in st.session_state:
+    st.session_state.df = ''
+
 if 'lastfile' not in st.session_state:
     st.session_state.lastfile = ''
 if 'lastname' not in st.session_state:
@@ -25,10 +28,10 @@ st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (
 
 # @st.cache
 def load(name):
-    dfo = sns.load_dataset(name)
-    if 'Unnamed: 0' in dfo.columns:
-        dfo.drop('Unnamed: 0',inplace=True,axis = 1)
-    return dfo
+    dof = sns.load_dataset(name)
+    if 'Unnamed: 0' in dof.columns:
+        dof.drop('Unnamed: 0',inplace=True,axis = 1)
+    return dof
 
 pallets = ['bright','deep','muted','hls','rocket','Blues']
 available = False
@@ -36,20 +39,20 @@ if st.session_state.how == 'Use Built-in Datasets':
     name = st.selectbox('Which data set do you want to work on?',options=st.session_state.data_names,index=0,)
     if name != 'None':
         if st.session_state.lastname != name:
-            df = load(name).copy(deep=True)
+            st.session_state.df = load(name).copy(deep=True)
             st.session_state.lastname = name
         available = True
         if st.checkbox('Preview Data'):
-            st.write(df)
-            st.write(f'{len(df)} Data entries')
+            st.write(st.session_state.df)
+            st.write(f'{len(st.session_state.df)} Data entries')
 elif st.session_state.how == 'Upload my Data (csv or excel)':
     file = st.file_uploader('Upload Data file here',type=['csv','xlsx'])
     if file:
         if st.session_state.lastfile != file:
             if file.type == 'text/csv':
-                df = pd.read_csv(file)
+                st.session_state.df = pd.read_csv(file)
             elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-                df = pd.read_excel(file)
+                st.session_state.df = pd.read_excel(file)
             else:
                 st.warning('Warning: File Type not supported')
             st.session_state.lastfile = file
@@ -57,19 +60,19 @@ elif st.session_state.how == 'Upload my Data (csv or excel)':
         available = True
         if st.checkbox('Preview Data'):
             try:
-                st.write(df)
+                st.write(st.session_state.df)
             except:
                 st.warning('Could not show preview try using different csv file format')
-            st.write(f'{len(df)} Data entries')
+            st.write(f'{len(st.session_state.df)} Data entries')
 
 
 if available:
     if st.checkbox('Do you want to change data type of any feature?'):
         try:
-            colname = st.selectbox('Select a feature to change its data type',df.columns)
-            st.write(f'Data type of {colname} is {df[colname].dtype.name}')
+            colname = st.selectbox('Select a feature to change its data type',st.session_state.df.columns)
+            st.write(f'Data type of {colname} is {st.session_state.df[colname].dtype.name}')
             dtype = st.selectbox('Select Data Type',options=['float','str'])
-            df[colname] = df[colname].astype(dtype)
+            st.session_state.df[colname] = st.session_state.df[colname].astype(dtype)
         except:
             st.warning('Data type can not be converted')
 
@@ -80,30 +83,30 @@ if available:
         container1 = st.container()
         container2 = st.container()
         with container1:
-            columns = list(df.columns)
+            columns = list(st.session_state.df.columns)
             columns.insert(0,'None')
             x = st.selectbox('What should represent x axis?',options=columns,index=0,key='line1')
-            columns = list(df.columns)
-            for i in list(df.columns):
-                if df[i].dtype == 'O':
+            columns = list(st.session_state.df.columns)
+            for i in list(st.session_state.df.columns):
+                if st.session_state.df[i].dtype == 'O':
                     columns.remove(i)
             y = st.multiselect('What should be represent y axis?',options= columns)
             p1 = st.selectbox('Select Palette',options=pallets,index=0,key='line2')
             if len(y) !=0:
                 fig= plt.figure()
                 if x == 'None':
-                    sns.lineplot(data=df[y],palette=p1)
-                    xmin,xmax = 0,len(df)
+                    sns.lineplot(data=st.session_state.df[y],palette=p1)
+                    xmin,xmax = 0,len(st.session_state.df)
                 else:
-                    sns.lineplot(data = pd.DataFrame(np.array(df[y]),index = df[x],columns=y),palette=p1)
+                    sns.lineplot(data = pd.DataFrame(np.array(st.session_state.df[y]),index = st.session_state.df[x],columns=y),palette=p1)
 
                     try:
-                        xmin,xmax = df[x].min(),df[x].max()
+                        xmin,xmax = st.session_state.df[x].min(),st.session_state.df[x].max()
                     except:
                         pass
         with container2:
             if len(y) !=0:
-                if x !='None' and df[x].dtype.name not in ['object','category']:
+                if x !='None' and st.session_state.df[x].dtype.name not in ['object','category']:
                     # try:
                     if st.checkbox('Do you want to set x limits?',key='limits'):
                         if 'xmin' not in st.session_state:
@@ -124,17 +127,17 @@ if available:
 
     if 'Bar Graph' in graph_type:
         st.header('Bar Graph')
-        columnsx = list(df.columns)
+        columnsx = list(st.session_state.df.columns)
         columnsx.insert(0,'None')
-        for i in df.columns:
-            if df[i].dtype.name not in ['object','category']:
+        for i in st.session_state.df.columns:
+            if st.session_state.df[i].dtype.name not in ['object','category']:
                 columnsx.remove(i)
         x = st.selectbox('What should represent x axis?',options=columnsx,index=0,key='bar1')
         if x != 'None':
-            columnsy = list(df.columns)
+            columnsy = list(st.session_state.df.columns)
             columnsy.insert(0,'None')
-            for i in list(df.columns):
-                if df[i].dtype.name in ['object','category']:
+            for i in list(st.session_state.df.columns):
+                if st.session_state.df[i].dtype.name in ['object','category']:
                     columnsy.remove(i)
             y = st.selectbox('What should be represent y axis?',options= columnsy,index=0)
             hue = st.selectbox('What should be represent hue?',options= columnsx,index=0)
@@ -143,14 +146,14 @@ if available:
             fig= plt.figure()
             if y == 'None':
                 if hue != 'None':
-                    sns.countplot(x = df[x],hue=df[hue],palette=p2)
+                    sns.countplot(x = st.session_state.df[x],hue=st.session_state.df[hue],palette=p2)
                 else:
-                    sns.countplot(x = df[x],palette=p2)
+                    sns.countplot(x = st.session_state.df[x],palette=p2)
             else:
                 if hue != 'None':
-                    sns.barplot(x = df[x],y = df[y],hue=df[hue],palette=p2)
+                    sns.barplot(x = st.session_state.df[x],y = st.session_state.df[y],hue=st.session_state.df[hue],palette=p2)
                 else:
-                    sns.barplot(x = df[x],y = df[y],palette=p2)
+                    sns.barplot(x = st.session_state.df[x],y = st.session_state.df[y],palette=p2)
             st.pyplot(fig)
 
         
@@ -160,7 +163,6 @@ if available:
 
             
             
-
 
 
 
