@@ -14,6 +14,12 @@ if 'data_names' not in st.session_state:
         else:
             break
 
+if 'lastfile' not in st.session_state:
+    st.session_state.lastfile = ''
+if 'lastname' not in st.session_state:
+    st.session_state.lastname = ''
+    
+
 st.radio('How import dataset',options=['Use Built-in Datasets','Upload my Data (csv or excel)'],key='how')
 
 
@@ -29,7 +35,9 @@ available = False
 if st.session_state.how == 'Use Built-in Datasets':
     name = st.selectbox('Which data set do you want to work on?',options=st.session_state.data_names,index=0,)
     if name != 'None':
-        df = load(name).copy(deep=True)
+        if st.session_state.lastname != name:
+            df = load(name).copy(deep=True)
+            st.session_state.lastname = name
         available = True
         if st.checkbox('Preview Data'):
             st.write(df)
@@ -37,12 +45,14 @@ if st.session_state.how == 'Use Built-in Datasets':
 elif st.session_state.how == 'Upload my Data (csv or excel)':
     file = st.file_uploader('Upload Data file here',type=['csv','xlsx'])
     if file:
-        if file.type == 'text/csv':
-            df = pd.read_csv(file)
-        elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-            df = pd.read_excel(file)
-        else:
-            st.warning('Warning: File Type not supported')
+        if st.session_state.lastfile != file:
+            if file.type == 'text/csv':
+                df = pd.read_csv(file)
+            elif file.type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+                df = pd.read_excel(file)
+            else:
+                st.warning('Warning: File Type not supported')
+            st.session_state.lastfile = file
       
         available = True
         if st.checkbox('Preview Data'):
